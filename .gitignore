@@ -1,0 +1,50 @@
+# ROS2 build files
+build/
+install/
+log/
+.deps/
+colcon/
+.colcon/
+src/.catkin_tools/
+catkin_ws/devel/
+catkin_ws/build/
+catkin_ws/install/
+
+# Python Bytecode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# CMake/Make and other build artifacts
+CMakeLists.txt.user
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.swp
+*.swo
+*.bak
+*.tmp
+*.log
+
+# IDE specific files
+.vscode/
+.idea/
+*.code-workspace
+
+# ROS testing and debugging files
+test_results/
+.debug/
+coverage/
+pytest_cache/
+.clang-format
+
+# Custom dependencies or generated code
+**/msgs/**/cmake-build-debug/
+
+# ROS2 launch log files
+*.launch.py.log
+
+# Ignore hidden system files
+.DS_Store
+*.~undo-tree~
