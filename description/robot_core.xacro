@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-    <!-- Base Link (Reference Frame) -->
+      <!-- Base Link (Reference Frame) -->
     <link name="base_link">
         <!-- No geometry or visual as it serves as a reference frame -->
     </link>
@@ -18,7 +18,7 @@
         </visual>
     </link>
 
-    <!-- Joint between base_link and back_body -->
+    <!-- Fixed Joint between base_link and back_body -->
     <joint name="back_body_joint" type="fixed">
         <parent link="base_link"/>
         <child link="back_body"/>
@@ -37,11 +37,11 @@
         </visual>
     </link>
 
-    <!-- Center Joint (between front and back sections) -->
+    <!-- Center Joint (between back_body and front_body) -->
     <joint name="center_joint" type="revolute">
         <parent link="back_body"/>
         <child link="front_body"/>
-        <origin xyz="0 0 0.045" rpy="0 0 0"/>
+        <origin xyz="0.09 0 0.045" rpy="0 0 0"/>
         <axis xyz="0 0 1"/>
         <limit lower="-1.5708" upper="1.5708" effort="10" velocity="1"/>
     </joint>
@@ -57,12 +57,11 @@
             </material>
         </visual>
     </link>
-    <joint name="front_left_wheel_joint" type="revolute">
+    <joint name="front_left_wheel_joint" type="continuous">
         <parent link="front_body"/>
         <child link="front_left_wheel"/>
-        <origin xyz="0.09 0.09 0" rpy="0 1.5708 0"/>
+        <origin xyz="0.09 0.09 -0.045" rpy="0 1.5708 0"/>
         <axis xyz="0 1 0"/>
-        <limit lower="0" upper="0" effort="5" velocity="10"/>
     </joint>
 
     <!-- Front Right Wheel Link and Joint -->
@@ -76,12 +75,11 @@
             </material>
         </visual>
     </link>
-    <joint name="front_right_wheel_joint" type="revolute">
+    <joint name="front_right_wheel_joint" type="continuous">
         <parent link="front_body"/>
         <child link="front_right_wheel"/>
-        <origin xyz="0.09 -0.09 0" rpy="0 1.5708 0"/>
+        <origin xyz="0.09 -0.09 -0.045" rpy="0 1.5708 0"/>
         <axis xyz="0 1 0"/>
-        <limit lower="0" upper="0" effort="5" velocity="10"/>
     </joint>
 
     <!-- Back Left Wheel Link and Joint -->
@@ -95,12 +93,11 @@
             </material>
         </visual>
     </link>
-    <joint name="back_left_wheel_joint" type="revolute">
+    <joint name="back_left_wheel_joint" type="continuous">
         <parent link="back_body"/>
         <child link="back_left_wheel"/>
-        <origin xyz="-0.09 0.09 0" rpy="0 1.5708 0"/>
+        <origin xyz="-0.09 0.09 -0.045" rpy="0 1.5708 0"/>
         <axis xyz="0 1 0"/>
-        <limit lower="0" upper="0" effort="5" velocity="10"/>
     </joint>
 
     <!-- Back Right Wheel Link and Joint -->
@@ -114,11 +111,10 @@
             </material>
         </visual>
     </link>
-    <joint name="back_right_wheel_joint" type="revolute">
+    <joint name="back_right_wheel_joint" type="continuous">
         <parent link="back_body"/>
         <child link="back_right_wheel"/>
-        <origin xyz="-0.09 -0.09 0" rpy="0 1.5708 0"/>
+        <origin xyz="-0.09 -0.09 -0.045" rpy="0 1.5708 0"/>
         <axis xyz="0 1 0"/>
-        <limit lower="0" upper="0" effort="5" velocity="10"/>
     </joint>
 </robot>
