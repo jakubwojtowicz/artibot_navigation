@@ -1,78 +1,124 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-    <material name="blue">
-        <color rgba="0.2 0.2 1 1"/>
-    </material>
-
-    <material name="black">
-        <color rgba="0 0 0 1"/>
-    </material>
-
+    <!-- Base Link (Reference Frame) -->
     <link name="base_link">
-        <visual>
-            <origin xyz="0 0 0.0305" rpy="0 0 0" />
-        </visual>
+        <!-- No geometry or visual as it serves as a reference frame -->
     </link>
 
-    <link name="chasis_back">
+    <!-- Back Body Link -->
+    <link name="back_body">
         <visual>
-        <origin xyz="0 0 0" rpy="0 0 0" />
-        <geometry>
-            <box size="0.18 0.18 0.09" />
-        </geometry>
-        <material name="black"/>
-        </visual>
-        <collision>
-            <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <box size="0.18 0.18 0.09" />
+                <box size="0.18 0.18 0.09"/>
             </geometry>
-        </collision>
-        <inertial>
-            <origin xyz="0 0 0" rpy="0 0 0" />
-            <mass value="1" />
-            <inertia ixx="0.16666666666666666" ixy="0" ixz="0" iyy="0.16666666666666666" iyz="0" izz="0.16666666666666666" />
-        </inertial>
+            <material name="black">
+                <color rgba="0 0 0 1"/>
+            </material>
+        </visual>
     </link>
 
-    <joint name="base_link_to_chasis_back" type="fixed">
-        <parent link="base_link" />
-        <child link="chasis_back" />
-        <origin xyz="0.03 0 0.045" rpy="0 0 0" />
+    <!-- Joint between base_link and back_body -->
+    <joint name="back_body_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="back_body"/>
+        <origin xyz="0 0 0.045" rpy="0 0 0"/>
     </joint>
 
-    <link name="left_wheel_back">
+    <!-- Front Body Link -->
+    <link name="front_body">
         <visual>
-            <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <cylinder radius="0.0305" length="0.025" />
+                <box size="0.18 0.18 0.09"/>
             </geometry>
-            <material name="blue"/>
+            <material name="black">
+                <color rgba="0 0 0 1"/>
+            </material>
         </visual>
     </link>
-    <joint name="chasis_back_to_left_wheel_back" type="continuous">
-        <parent link="base_link" />
-        <child link="left_wheel_back" />
-        <origin xyz="0 0.08 0" rpy="${pi/2} 0 0" />
+
+    <!-- Center Joint (between front and back sections) -->
+    <joint name="center_joint" type="revolute">
+        <parent link="back_body"/>
+        <child link="front_body"/>
+        <origin xyz="0 0 0.045" rpy="0 0 0"/>
         <axis xyz="0 0 1"/>
+        <limit lower="-1.5708" upper="1.5708" effort="10" velocity="1"/>
     </joint>
 
-    <link name="right_wheel_back">
+    <!-- Front Left Wheel Link and Joint -->
+    <link name="front_left_wheel">
         <visual>
-            <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <cylinder radius="0.0305" length="0.025" />
+                <cylinder radius="0.0305" length="0.025"/>
             </geometry>
-            <material name="blue"/>
+            <material name="yellow">
+                <color rgba="1 1 0 1"/>
+            </material>
         </visual>
     </link>
-    <joint name="chasis_back_to_right_wheel_back" type="continuous">
-        <parent link="base_link" />
-        <child link="right_wheel_back" />
-        <origin xyz="0 -0.08 0" rpy="-${pi/2} 0 0" />
-        <axis xyz="0 0 1"/>
+    <joint name="front_left_wheel_joint" type="revolute">
+        <parent link="front_body"/>
+        <child link="front_left_wheel"/>
+        <origin xyz="0.09 0.09 0" rpy="0 1.5708 0"/>
+        <axis xyz="0 1 0"/>
+        <limit lower="0" upper="0" effort="5" velocity="10"/>
     </joint>
-    
 
+    <!-- Front Right Wheel Link and Joint -->
+    <link name="front_right_wheel">
+        <visual>
+            <geometry>
+                <cylinder radius="0.0305" length="0.025"/>
+            </geometry>
+            <material name="yellow">
+                <color rgba="1 1 0 1"/>
+            </material>
+        </visual>
+    </link>
+    <joint name="front_right_wheel_joint" type="revolute">
+        <parent link="front_body"/>
+        <child link="front_right_wheel"/>
+        <origin xyz="0.09 -0.09 0" rpy="0 1.5708 0"/>
+        <axis xyz="0 1 0"/>
+        <limit lower="0" upper="0" effort="5" velocity="10"/>
+    </joint>
+
+    <!-- Back Left Wheel Link and Joint -->
+    <link name="back_left_wheel">
+        <visual>
+            <geometry>
+                <cylinder radius="0.0305" length="0.025"/>
+            </geometry>
+            <material name="yellow">
+                <color rgba="1 1 0 1"/>
+            </material>
+        </visual>
+    </link>
+    <joint name="back_left_wheel_joint" type="revolute">
+        <parent link="back_body"/>
+        <child link="back_left_wheel"/>
+        <origin xyz="-0.09 0.09 0" rpy="0 1.5708 0"/>
+        <axis xyz="0 1 0"/>
+        <limit lower="0" upper="0" effort="5" velocity="10"/>
+    </joint>
+
+    <!-- Back Right Wheel Link and Joint -->
+    <link name="back_right_wheel">
+        <visual>
+            <geometry>
+                <cylinder radius="0.0305" length="0.025"/>
+            </geometry>
+            <material name="yellow">
+                <color rgba="1 1 0 1"/>
+            </material>
+        </visual>
+    </link>
+    <joint name="back_right_wheel_joint" type="revolute">
+        <parent link="back_body"/>
+        <child link="back_right_wheel"/>
+        <origin xyz="-0.09 -0.09 0" rpy="0 1.5708 0"/>
+        <axis xyz="0 1 0"/>
+        <limit lower="0" upper="0" effort="5" velocity="10"/>
+    </joint>
 </robot>
