@@ -21,8 +21,6 @@ def generate_launch_description():
     xacro_file = os.path.join(pkg_path, 'description', 'robot.urdf.xacro')
     robot_description_config = xacro.process_file(xacro_file)
 
-    default_rviz_config_path = os.path.join(pkg_path, 'config', 'urdf_config.rviz')
-    
     # Create a robot_state_publisher node
     params = {'robot_description': robot_description_config.toxml(), 'use_sim_time': use_sim_time}
     robot_state_publisher = Node(
@@ -69,14 +67,6 @@ def generate_launch_description():
         output='screen'
     )
 
-    rviz_node = Node(
-        package='rviz2',
-        executable='rviz2',
-        name='rviz2',
-        output='screen',
-        arguments=['-d', LaunchConfiguration('rvizconfig')],
-    )
-
     # Launch!
     return LaunchDescription([
         DeclareLaunchArgument(
@@ -84,14 +74,8 @@ def generate_launch_description():
             default_value='false',
             description='Use sim time if true'
         ),
-        DeclareLaunchArgument(
-            'rvizconfig',
-            default_value=default_rviz_config_path,
-            description='Absolute path to rviz config file'
-        ),
         robot_state_publisher,
         rplidar_node,
         rf2o_odometry,
-        slam_toolbox,
-        rviz_node
+        slam_toolbox
     ])
