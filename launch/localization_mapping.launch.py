@@ -20,10 +20,12 @@ def generate_launch_description():
     pkg_path = os.path.join(get_package_share_directory('artibot_navigation'))
     xacro_file = os.path.join(pkg_path, 'description', 'robot.urdf.xacro')
     robot_description_config = xacro.process_file(xacro_file)
+
+    default_rviz_config_path = os.path.join(pkg_path, 'config', 'urdf_config.rviz')
     
     # Create a robot_state_publisher node
     params = {'robot_description': robot_description_config.toxml(), 'use_sim_time': use_sim_time}
-    node_robot_state_publisher = Node(
+    robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
         output='screen',
@@ -45,11 +47,34 @@ def generate_launch_description():
     )
 
     # Add rf2o_laser_odometry launch
-    rf2o_odometry_launch = ExecuteProcess(
+    rf2o_odometry = ExecuteProcess(
         cmd=[
             'ros2', 'launch', 'rf2o_laser_odometry', 'rf2o_laser_odometry.launch.py'
         ],
         output='screen'
+    )
+
+    # Add slam_toolbox
+    slam_toolbox = ExecuteProcess(
+        cmd=[
+            'ros2', 'run', 'slam_toolbox', 'sync_slam_toolbox_node',
+            '--ros-args',
+            '-p', 'slam_mode:=true',
+            '-p', 'base_frame:=base_link',
+            '-p', 'odom_frame:=odom',
+            '-p', 'scan_topic:=/scan',
+            '-p', 'map_frame:=map',
+            '-p', 'use_scan_matching:=true'
+        ],
+        output='screen'
+    )
+
+    rviz_node = Node(
+        package='rviz2',
+        executable='rviz2',
+        name='rviz2',
+        output='screen',
+        arguments=['-d', LaunchConfiguration('rvizconfig')],
     )
 
     # Launch!
@@ -59,7 +84,14 @@ def generate_launch_description():
             default_value='false',
             description='Use sim time if true'
         ),
-        node_robot_state_publisher,
+        DeclareLaunchArgument(
+            'rvizconfig',
+            default_value=default_rviz_config_path,
+            description='Absolute path to rviz config file'
+        ),
+        robot_state_publisher,
         rplidar_node,
-        rf2o_odometry_launch
+        rf2o_odometry,
+        slam_toolbox,
+        rviz_node
     ])
