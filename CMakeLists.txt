@@ -10,6 +10,10 @@ find_package(ament_cmake REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
+find_package(rclpy REQUIRED)
+find_package(artibot_object_detection REQUIRED)
+find_package(sensor_msgs REQUIRED)
+
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -26,6 +30,14 @@ endif()
 install(
   DIRECTORY config description launch worlds
   DESTINATION share/${PROJECT_NAME}
+)
+
+install(PROGRAMS
+  artibot_navigation/collision_avoidance_planner_node.py
+  artibot_navigation/exploration_planner_node.py
+  artibot_navigation/motion_controller_node.py
+  artibot_navigation/object_tracking_planner_node.py
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 ament_package()
