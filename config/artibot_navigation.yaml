@@ -1,0 +1,25 @@
+
+  exploration_planner_node:
+    ros__parameters:
+      max_distance_to_turn: 2.0 #distance in meters in front of the robot before it starts to change direction [m]
+
+  object_tracking_planner_node:
+    ros__parameters:
+      min_detected_score: 0.4 #minimum score of the detected bounding box to start tracking the object
+
+  collision_avoidance_planner_node:
+    ros__parameters:
+      distance_from_obstacle_treshold: 0.2 #distance from the obstscle to set collision state [m]
+      backtracking_enabled: true #disable or enable backwards movement when collision is detected 
+      backtracking_distance: 0.5 #maximum distance of backtracing if backtracking_enabled is set to true [m]
+
+  motion_controller_node:
+    ros__parameters:
+      max_linear_speed: 0.5 #maximum linear speed of the robot [m/s]
+      min_linear_speed: 0.1 #minimum linear speed of the robot [m/s]
+      max_rotational_speed: 1.5 #maximum rotational speed [rad/s]
+      min_rotation_speed: 0.1 #minimum rotational speed [rad/s]
+      min_turning_radius: 0.2 #minimum turning radius [m]
+      linear_acceleration: 0.1 #linear acceleration [m/s^2]
+      rotational_acceleration: 0.1 #rotational acceleration [m/s^2]
+      controller_frequency: 10.0 #how many times per second cmd_vel message is published [1/s]
