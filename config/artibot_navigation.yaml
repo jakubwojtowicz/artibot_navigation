@@ -1,10 +1,10 @@
-
   exploration_planner_node:
     ros__parameters:
       max_distance_to_turn: 0.4 #distance in meters in front of the robot before it starts to change direction [m]
       motion_command_frequency: 5.0 #how many times per second motion comand will be sent to motion_controller
       inf_weight: 0.05 #how much impact on turning infinite values from sensor have
       min_distance_weight: 1.0 #how much impact on turning minimum range values have
+      max_distance_weight: 0.01 #how much impact on turning maximum range values have
       side_angle_range: 45 #angle of view on the left and right sides which robot checks to make decision about turning
 
   object_tracking_planner_node:
@@ -14,7 +14,10 @@
       motion_command_frequency: 5.0 #how many times per second motion comand will be sent to motion_controller
       image_height: 480.0 
       image_width: 640.0 
-  
+      not_detected_images_to_lost: 3 #on how many images object can be not found in following mode to not change state to exploration
+      dead_zone: 30 #width from image center which is a treshold for turning the robot 
+      min_object_height: 0.2 #proportion between object and image heights which is a treshold to stop the robot
+
   collision_avoidance_planner_node:
     ros__parameters:
       distance_from_obstacle_treshold: 0.4 #distance from the obstscle to set collision state [m]
@@ -26,9 +29,12 @@
   motion_controller_node:
     ros__parameters:
       max_linear_speed: 0.3 #maximum linear speed of the robot [m/s]
+      max_linear_speed_object_tracking: 0.2 #maximum linear speed of the robot while tracking an object [m/s]
       min_linear_speed: -0.3 #minimum linear speed of the robot [m/s]
-      max_rotation_speed: 1.2 #maximum rotational speed [rad/s]
-      min_rotation_speed: -1.2 #minimum rotational speed [rad/s]
+      max_rotation_speed: 1.0 #maximum rotational speed [rad/s]
+      min_rotation_speed: -1.0 #minimum rotational speed [rad/s]
       min_turning_radius: 0.2 #minimum turning radius [m]
       rotational_acceleration: 0.1 #rotational acceleration [rad/s^2]
+      rotational_acceleration_object_tracking: 0.05 #rotational acceleration while tracking an object [rad/s^2]
       controller_frequency: 10.0 #how many times per second cmd_vel message is published [1/s]
+    

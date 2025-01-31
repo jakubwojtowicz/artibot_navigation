@@ -13,12 +13,14 @@ class MotionControllerNode(Node):
             namespace='',
             parameters=[
                 ('max_linear_speed', 0.3),
+                ('max_linear_speed_object_tracking', 0.2),
                 ('min_linear_speed', -0.3),
                 ('max_rotation_speed', 1.5),
                 ('min_rotation_speed', -1.5),
                 ('min_turning_radius', 0.2),
                 ('controller_frequency', 10.0),
-                ('rotational_acceleration', 0.1)
+                ('rotational_acceleration', 0.1),
+                ('rotational_acceleration_object_tracking', 0.1)
             ])
         
         self.max_linear_vel = self.get_parameter('max_linear_speed').get_parameter_value().double_value
@@ -81,11 +83,11 @@ class MotionControllerNode(Node):
     def angular_speed_controller(self):
         if self.current_command == 'turn_right':
             if self.angular_z > self.min_rot_speed:
-                self.linear_x = self.get_parameter('max_linear_speed').get_parameter_value().double_value
+                self.linear_x = self.max_linear_vel
                 self.angular_z -= self.rot_accel
         elif self.current_command == 'turn_left':
             if self.angular_z < self.max_rot_speed:
-                self.linear_x = self.get_parameter('max_linear_speed').get_parameter_value().double_value
+                self.linear_x = self.max_linear_vel
                 self.angular_z += self.rot_accel
         elif self.current_command == 'forward' or self.current_command == 'backward':
             if self.angular_z < 0:
@@ -95,6 +97,12 @@ class MotionControllerNode(Node):
 
     def nav_state_callback(self, msg):
         self.nav_state = msg.data
+        if msg.data == 'object_tracking':
+            self.max_linear_vel = self.get_parameter('max_linear_speed_object_tracking').get_parameter_value().double_value
+            self.rot_accel = self.get_parameter('rotational_acceleration_object_tracking').get_parameter_value().double_value
+        else:
+            self.max_linear_vel = self.get_parameter('max_linear_speed').get_parameter_value().double_value
+            self.rot_accel = self.get_parameter('rotational_acceleration').get_parameter_value().double_value
 
 def main(args=None):
     rclpy.init(args=args)

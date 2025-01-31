@@ -17,13 +17,15 @@ class ExplorationPlannerNode(Node):
                 ('motion_command_frequency', 10.0),
                 ('inf_weight', 0.05),
                 ('min_distance_weight', 1.0),
-                ('side_angle_range', 45)
+                ('side_angle_range', 45),
+                ('max_distance_weight', 1.0)
             ])
 
         self.distance_treshold = self.get_parameter('max_distance_to_turn').get_parameter_value().double_value
         self.inf_weight = self.get_parameter('inf_weight').get_parameter_value().double_value
         self.min_distance_weight = self.get_parameter('min_distance_weight').get_parameter_value().double_value
         self.side_angle_range = self.get_parameter('side_angle_range').get_parameter_value().integer_value
+        self.max_distance_weight = self.get_parameter('max_distance_weight').get_parameter_value().double_value
 
         # motion_controller publisher
         self.motion_controller_pub = self.create_publisher(String, 'motion_command', 10)
@@ -42,12 +44,11 @@ class ExplorationPlannerNode(Node):
         self.get_logger().info("Exploration Planner node initialized.")
 
     def laser_scan_callback(self, msg):
-
         if self.nav_state not in ['collision', 'object_tracking', 'goal_achieved']:
             ranges = msg.ranges
             front_ranges = ranges[-15:] + ranges[:15]
-            left_ranges = ranges[15:60]
-            right_ranges = ranges[-60:-15]
+            left_ranges = ranges[15:70]
+            right_ranges = ranges[-70:-15]
 
             front_inf_count = len([value for value in front_ranges if math.isinf(value)])
             left_inf_count = len([value for value in left_ranges if math.isinf(value)])
@@ -68,9 +69,9 @@ class ExplorationPlannerNode(Node):
             if right_ranges_valid:
                 avg_right_ranges = sum(right_ranges_valid) / len(right_ranges_valid)
 
-            front_score = avg_front_ranges + self.inf_weight*front_inf_count - self.min_distance_weight/min(front_ranges)
-            left_score = avg_left_ranges + self.inf_weight*left_inf_count - self.min_distance_weight/min(left_ranges)
-            right_score = avg_right_ranges + self.inf_weight*right_inf_count - self.min_distance_weight/min(right_ranges)
+            front_score = avg_front_ranges + self.inf_weight*front_inf_count - self.min_distance_weight/min(front_ranges) + self.max_distance_weight*max(front_ranges_valid)
+            left_score = avg_left_ranges + self.inf_weight*left_inf_count - self.min_distance_weight/min(left_ranges) + self.max_distance_weight*max(left_ranges_valid)
+            right_score = avg_right_ranges + self.inf_weight*right_inf_count - self.min_distance_weight/min(right_ranges) + self.max_distance_weight*max(right_ranges_valid)
             
             if (front_score>left_score) and (front_score>right_score) and (min(front_ranges) > self.distance_treshold):
                 self.motion_command = 'forward'
